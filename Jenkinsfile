@@ -2,27 +2,49 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello'){
+
+        stage('Checkout') {
             steps {
-                echo "Hello, Jenkeins"
-                echo "this is my first pipeline"
+                echo 'Source code has been checked out'
+                sh 'ls -la'
             }
         }
-        stage('System Information'){
+
+        stage('Build') {
             steps {
-                sh 'whoami'
-                sh 'hostname'
-                sh  'pwd'
+                echo 'Building application...'
+
+                sh '''
+                    echo "Jenkins Build Number: $BUILD_NUMBER"
+                    echo "Build Date: $(date)"
+
+                    mkdir -p build
+
+                    echo "Application built successfully" > build/app.txt
+                    echo "Build Number: $BUILD_NUMBER" >> build/app.txt
+                    echo "Built By: $(whoami)" >> build/app.txt
+                '''
             }
         }
-        stage('Build'){
-            steps{
-                echo "building application..."
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+
+                sh '''
+                    test -f build/app.txt
+                    echo "Test passed: build/app.txt exists"
+                '''
             }
         }
-        stage('test'){
-            steps{
-                echo "running tests..."
+
+        stage('Report') {
+            steps {
+                echo 'Build report:'
+
+                sh '''
+                    cat build/app.txt
+                '''
             }
         }
     }
