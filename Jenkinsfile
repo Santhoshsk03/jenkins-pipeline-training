@@ -34,6 +34,7 @@ pipeline {
                 sh '''
                     test -f build/app.txt
                     echo "Test passed: build/nonexistent.txt exists"
+                    echo "Test Passed"
                 '''
             }
         }
